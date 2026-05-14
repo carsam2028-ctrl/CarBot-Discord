@@ -43,7 +43,7 @@ async def ping(interaction: discord.Interaction):
 @bot.tree.command(name="profile", description="Check out a discord profile!")
 async def profile_checker(interaction: discord.Interaction, user: discord.Member):
     await interaction.response.defer(ephemeral=False)
-    #Initilize Embed w/ title and colour
+    #Initialize Embed w/ title and color
     embed_profile = discord.Embed(title=f"Display: {user.display_name}", color=discord.Color.dark_orange())
     #Add to embed_profile
     embed_profile.add_field(name="User Name:", value=f"{user.name}")
