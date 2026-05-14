@@ -1,6 +1,5 @@
 #Imports
 import os
-
 import discord
 # noinspection PyUnresolvedReferences
 import dotenv
