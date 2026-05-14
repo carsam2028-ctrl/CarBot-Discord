@@ -4,19 +4,17 @@ import discord
 import dotenv
 from dotenv import load_dotenv
 from discord.ext import commands
+from discord import app_commands
 load_dotenv()
 
 
 #Variables
-
-
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 intents = discord.Intents.all()
 intents.message_content = True
 
 
 #Bot Startup
-
 class CarBot(commands.Bot):
     async def on_ready(self):
         print(f'Logged on as {self.user}!')
@@ -26,11 +24,16 @@ class CarBot(commands.Bot):
         print('Synced Commands in Home Server!')
 
 
-bot = CarBot(command_prefix="CB!", intents=intents)
-
+bot = CarBot(command_prefix='CB!', intents=intents)
+#Error Handler
+@bot.tree.error
+async def on_command_error(interaction: discord.Interaction, error: discord.Interaction.command_failed):
+    if isinstance(error, app_commands.CommandInvokeError):
+        if interaction.response.is_done():
+            await interaction.followup.send("Please try again.")
+        else:
+            await interaction.response.send_message("Please try again.")
 #Commands
-
-
 @bot.tree.command(name="ping", description="Check the bot's latency")
 async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(f"Latency: {round(bot.latency * 1000)}ms")
@@ -38,13 +41,13 @@ async def ping(interaction: discord.Interaction):
 
 @bot.tree.command(name="profile", description="Check out a discord profile!")
 async def profile_checker(interaction: discord.Interaction, user: discord.Member):
-    embed_profile = discord.Embed()
     await interaction.response.defer(ephemeral=False)
-    #Create and set up embed
-    embed_profile.title = f"Display: {user.display_name}"
+    #Initilize Embed w/ title and colour
+    embed_profile = discord.Embed(title=f"Display: {user.display_name}", color=discord.Color.dark_orange())
+    #Add to embed_profile
     embed_profile.add_field(name="User Name:", value=f"{user.name}")
-    embed_profile.add_field(name="User ID:", value=f"{user.id}")
-    embed_profile.set_image(url=f"{user.display_avatar.url}")
+    embed_profile.add_field(name="User ID:", value=f"`{user.id}`")
+    embed_profile.set_image(url=f"{user.display_avata}")
     await interaction.followup.send(embed=embed_profile)
 
 
