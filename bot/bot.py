@@ -41,8 +41,8 @@ async def profile_checker(interaction: discord.Interaction, user: discord.Member
     embed_profile = discord.Embed()
     await interaction.response.defer(ephemeral=False)
     #Create and set up embed
-    embed_profile.title = f"{user.display_name}"
-    embed_profile.description = f"{user.name}"
+    embed_profile.title = f"Display: {user.display_name}"
+    embed_profile.add_field(name="User Name:", value=f"{user.name}")
     embed_profile.add_field(name="User ID:", value=f"{user.id}")
     embed_profile.set_image(url=f"{user.display_avatar.url}")
     await interaction.followup.send(embed=embed_profile)
