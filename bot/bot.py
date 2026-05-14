@@ -33,6 +33,7 @@ async def on_command_error(interaction: discord.Interaction, error: discord.Inte
             await interaction.followup.send("Please try again.")
         else:
             await interaction.response.send_message("Please try again.")
+        print(f"{error}")
 #Commands
 @bot.tree.command(name="ping", description="Check the bot's latency")
 async def ping(interaction: discord.Interaction):
@@ -51,5 +52,8 @@ async def profile_checker(interaction: discord.Interaction, user: discord.Member
     await interaction.followup.send(embed=embed_profile)
 
 
+@bot.tree.command(name="printer", description="Bot repeats whatever you input!")
+async def printer(interaction: discord.Interaction, msg: str):
+    await interaction.response.send_message(f"{interaction.user.mention} said: {msg}")
 #Loop
 bot.run(DISCORD_TOKEN)
