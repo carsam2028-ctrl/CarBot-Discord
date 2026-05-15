@@ -1,8 +1,11 @@
 #Imports
 import os
 from os import name
+from urllib import response
+
 import discord
 import dotenv
+from discord.app_commands.commands import validate_auto_complete_callback
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
@@ -23,6 +26,8 @@ class CarBot(commands.Bot):
         print('Synced Commands Globally!')
         await self.tree.sync(guild=discord.Object(id=1504288510650093570))
         print('Synced Commands in Home Server!')
+        await bot.change_presence(activity=discord.Game(name="WIP"))
+        print(f"{bot.user.name} presence set!")
 
 
 bot = CarBot(command_prefix='CB!', intents=intents)
@@ -83,7 +88,16 @@ async def profile_checker(interaction: discord.Interaction, user: discord.Member
 
 @bot.tree.command(name="printer", description="Bot repeats whatever you input!")
 async def printer(interaction: discord.Interaction, msg: str):
-    await interaction.response.send_message(f"{msg} \n-# By {interaction.user.name}")
+    await interaction.response.send_message(f"'{msg}' \n-# -By {interaction.user.name}")
+
+@bot.tree.help_command()
+async def help_cmd(interaction: discord.Interaction):
+    embed_help_cmd = discord.Embed(title="Help", color=discord.Color.purple())
+    embed_help_cmd.description("Commands:")
+    embed_help_cmd.add_field(name="Profile", value="Check some basic info about someones profile!")
+    embed_help_cmd.add_field(name="Printer", value="Prints message you input!")
+    embed_help_cmd.add_field(name="Ping", value="Shows bot latency.")
+    await interaction.response.send_message(embed=embed_help_cmd)
 
 #Loop
 bot.run(DISCORD_TOKEN)
