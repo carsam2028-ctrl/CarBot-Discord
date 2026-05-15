@@ -90,13 +90,13 @@ async def profile_checker(interaction: discord.Interaction, user: discord.Member
 async def printer(interaction: discord.Interaction, msg: str):
     await interaction.response.send_message(f"'{msg}' \n-# -By {interaction.user.name}")
 
-@bot.tree.help_command()
+@bot.tree.command(name="help", description="Shows commands.")
 async def help_cmd(interaction: discord.Interaction):
     embed_help_cmd = discord.Embed(title="Help", color=discord.Color.purple())
     embed_help_cmd.description("Commands:")
     embed_help_cmd.add_field(name="Profile", value="Check some basic info about someones profile!")
-    embed_help_cmd.add_field(name="Printer", value="Prints message you input!")
-    embed_help_cmd.add_field(name="Ping", value="Shows bot latency.")
+    embed_help_cmd.add_field(name="Printer", value="Prints message you input!", inline=False)
+    embed_help_cmd.add_field(name="Ping", value="Shows bot latency.", inline=False)
     await interaction.response.send_message(embed=embed_help_cmd)
 
 #Loop
