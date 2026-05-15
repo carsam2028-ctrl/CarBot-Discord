@@ -60,26 +60,30 @@ async def ping(interaction: discord.Interaction):
 @app_commands.describe(user="User's profile to fetch")
 async def profile_checker(interaction: discord.Interaction, user: discord.Member):
     await interaction.response.defer(ephemeral=False)
-    #Initialize Embed w/ title and color
-    embed_profile = discord.Embed(title=f"Display: {user.display_name}", color=discord.Color.dark_orange())
+    #Initialize Embed w/ title and color for main profile
+    embed_profile = discord.Embed(title=f"Profile of {user.display_name}", color=discord.Color.dark_orange())
     #Add to embed_profile
-    embed_profile.add_field(name="User Name:", value=f"{user.name}")
+    embed_profile.add_field(name="Display Name:", value=f"{user.display_name}")
+    embed_profile.add_field(name="User Name:", value=f"{user.name}", inline=False)
     embed_profile.add_field(name="User ID:", value=f"`{user.id}`", inline=False)
     embed_profile.add_field(name="Joined Discord:", value=f"{user.created_at.strftime('%Y-%m-%d')}", inline=False)
     embed_profile.add_field(name="User Profile:", value="", inline=False)
     embed_profile.set_image(url=f"{user.display_avatar.url}")
     await interaction.followup.send(embed=embed_profile)
+
+    #Initialize Another Embed w/ title and color for banner
     embed_profile_banner = discord.Embed(title=f"{user.display_name}'s banner")
-    if user.display_banner:
+    #Checks if user has a custom banner and if not, does not send an image
+    #Bots don't seem to work.
+    if user.display_banner is not None:
         embed_profile_banner.set_image(url=f"{user.display_banner.url}")
     else:
         embed_profile_banner.add_field(name="User does not have a banner", value="", inline=False)
-
     await interaction.followup.send(embed=embed_profile_banner, ephemeral=True)
 
 @bot.tree.command(name="printer", description="Bot repeats whatever you input!")
 async def printer(interaction: discord.Interaction, msg: str):
-    await interaction.response.send_message(f"{interaction.user.mention} said: {msg}")
+    await interaction.response.send_message(f"{msg} \n-# By {interaction.user.name}")
 
 #Loop
 bot.run(DISCORD_TOKEN)
