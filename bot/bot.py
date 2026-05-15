@@ -1,5 +1,6 @@
 #Imports
 import os
+from os import name
 import discord
 import dotenv
 from dotenv import load_dotenv
@@ -25,6 +26,7 @@ class CarBot(commands.Bot):
 
 
 bot = CarBot(command_prefix='CB!', intents=intents)
+
 #Error Handler
 @bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction, error):
@@ -47,6 +49,7 @@ async def on_app_command_error(interaction: discord.Interaction, error):
         await interaction.followup.send(f"{err_msg}")
     else:
         await interaction.response.send_message(f"{err_msg}")
+
 #Commands
 @bot.tree.command(name="ping", description="Check the bot's latency")
 async def ping(interaction: discord.Interaction):
@@ -54,19 +57,29 @@ async def ping(interaction: discord.Interaction):
 
 
 @bot.tree.command(name="profile", description="Check out a discord profile!")
+@app_commands.describe(user="User's profile to fetch")
 async def profile_checker(interaction: discord.Interaction, user: discord.Member):
     await interaction.response.defer(ephemeral=False)
     #Initialize Embed w/ title and color
     embed_profile = discord.Embed(title=f"Display: {user.display_name}", color=discord.Color.dark_orange())
     #Add to embed_profile
     embed_profile.add_field(name="User Name:", value=f"{user.name}")
-    embed_profile.add_field(name="User ID:", value=f"`{user.id}`")
-    embed_profile.set_image(url=f"{user.display_avatar}")
+    embed_profile.add_field(name="User ID:", value=f"`{user.id}`", inline=False)
+    embed_profile.add_field(name="Joined Discord:", value=f"{user.created_at.strftime('%Y-%m-%d')}", inline=False)
+    embed_profile.add_field(name="User Profile:", value="", inline=False)
+    embed_profile.set_image(url=f"{user.display_avatar.url}")
     await interaction.followup.send(embed=embed_profile)
+    embed_profile_banner = discord.Embed(title=f"{user.display_name}'s banner")
+    if user.display_banner:
+        embed_profile_banner.set_image(url=f"{user.display_banner.url}")
+    else:
+        embed_profile_banner.add_field(name="User does not have a banner", value="", inline=False)
 
+    await interaction.followup.send(embed=embed_profile_banner, ephemeral=True)
 
 @bot.tree.command(name="printer", description="Bot repeats whatever you input!")
 async def printer(interaction: discord.Interaction, msg: str):
     await interaction.response.send_message(f"{interaction.user.mention} said: {msg}")
+
 #Loop
 bot.run(DISCORD_TOKEN)
