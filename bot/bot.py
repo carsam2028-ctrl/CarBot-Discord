@@ -27,13 +27,26 @@ class CarBot(commands.Bot):
 bot = CarBot(command_prefix='CB!', intents=intents)
 #Error Handler
 @bot.tree.error
-async def on_command_error(interaction: discord.Interaction, error: discord.Interaction.command_failed):
+async def on_app_command_error(interaction: discord.Interaction, error):
+    err_msg = ""
+    print(f"Error: {str(error)}")
     if isinstance(error, app_commands.CommandInvokeError):
-        if interaction.response.is_done():
-            await interaction.followup.send("Please try again.")
-        else:
-            await interaction.response.send_message("Please try again.")
-        print(f"{error}")
+        error = error.original
+        err_msg = "Command Invoke Error has occurred, please try again."
+    elif isinstance(error, app_commands.MissingPermissions):
+        err_msg = "You do not have the necessary permission(s) for this command."
+    elif isinstance(error, app_commands.BotMissingPermissions):
+        err_msg = "Bot does not have required permission(s)."
+    elif isinstance(error, discord.HTTPException):
+        err_msg = "An HTTP Exception has occurred, try again."
+    else:
+        err_msg = f"A fatal error has occurred: {str(error)}"
+
+
+    if interaction.response.is_done():
+        await interaction.followup.send(f"{err_msg}")
+    else:
+        await interaction.response.send_message(f"{err_msg}")
 #Commands
 @bot.tree.command(name="ping", description="Check the bot's latency")
 async def ping(interaction: discord.Interaction):
@@ -48,7 +61,7 @@ async def profile_checker(interaction: discord.Interaction, user: discord.Member
     #Add to embed_profile
     embed_profile.add_field(name="User Name:", value=f"{user.name}")
     embed_profile.add_field(name="User ID:", value=f"`{user.id}`")
-    embed_profile.set_image(url=f"{user.display_avata}")
+    embed_profile.set_image(url=f"{user.display_avatar}")
     await interaction.followup.send(embed=embed_profile)
 
 
