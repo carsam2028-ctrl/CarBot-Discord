@@ -46,14 +46,16 @@ async def on_app_command_error(interaction: discord.Interaction, error):
         err_msg = "Bot does not have required permission(s)."
     elif isinstance(error, discord.HTTPException):
         err_msg = "An HTTP Exception has occurred, try again."
+    elif isinstance(error, discord.HTTPException) and error.status == 429:
+        err_msg = "We are being rate limited, please try again after a couple seconds."
     else:
         err_msg = f"A fatal error has occurred: {str(error)}"
 
 
     if interaction.response.is_done():
-        await interaction.followup.send(f"{err_msg}")
+        await interaction.followup.send(f"{err_msg}", ephemeral=True)
     else:
-        await interaction.response.send_message(f"{err_msg}")
+        await interaction.response.send_message(f"{err_msg}", ephemeral=True)
 
 #Commands
 @bot.tree.command(name="ping", description="Check the bot's latency")
@@ -86,7 +88,7 @@ async def profile_checker(interaction: discord.Interaction, user: discord.Member
         embed_profile_banner.set_image(url=f"{fetch_user.banner.url}")
     else:
         embed_profile_banner.add_field(name="User does not have a banner", value="\u200b", inline=False)
-    await interaction.followup.send(embed=embed_profile_banner, ephemeral=True)
+    await interaction.followup.send(embed=embed_profile_banner)
 
 @bot.tree.command(name="printer", description="Bot repeats whatever you input!")
 async def printer(interaction: discord.Interaction, msg: str):
@@ -99,6 +101,19 @@ async def help_cmd(interaction: discord.Interaction):
     embed_help_cmd.add_field(name="Printer", value="Prints message you input!", inline=False)
     embed_help_cmd.add_field(name="Ping", value="Shows bot latency.", inline=False)
     await interaction.response.send_message(embed=embed_help_cmd)
+
+@bot.tree.command(name="purge", description="Purge messages")
+@app_commands.describe(amount="How many messages you want to purge (1-100)")
+@app_commands.checks.has_permissions(manage_messages=True)
+async def purge(interaction: discord.Interaction, amount: int):
+    await interaction.response.defer(ephemeral=True)
+
+    if 100 > amount < 1:
+        await interaction.followup.send("Whoa, that is over/under the limit.", ephemeral=True)
+    else:
+        await interaction.channel.purge(limit=amount, reason=f"{interaction.user} used purge command.", check=lambda msg: not msg.pinned)
+        await interaction.followup.send(f"{amount} message(s) deleted.", ephemeral=True)
+
 
 #Loop
 bot.run(DISCORD_TOKEN)
