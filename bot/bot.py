@@ -38,10 +38,7 @@ bot = CarBot(command_prefix='CB!', intents=intents)
 async def on_app_command_error(interaction: discord.Interaction, error):
     err_msg = ""
     print(signature_print() + f"Error: {str(error)}")
-    if isinstance(error, app_commands.CommandInvokeError):
-        error = error.original
-        err_msg = "An error has occurred, please try again."
-    elif isinstance(error, app_commands.MissingPermissions):
+    if isinstance(error, app_commands.MissingPermissions):
         err_msg = "You do not have the necessary permission(s) for this command."
     elif isinstance(error, app_commands.BotMissingPermissions):
         err_msg = "Bot does not have required permission(s)."
@@ -49,6 +46,11 @@ async def on_app_command_error(interaction: discord.Interaction, error):
         err_msg = "An HTTP Exception has occurred, try again."
     elif isinstance(error, discord.HTTPException) and error.status == 429:
         err_msg = "We are being rate limited, please try again after a couple seconds."
+    elif isinstance(error, discord.Forbidden):
+        err_msg = "Bot does not have required permission(s)."
+    elif isinstance(error, app_commands.CommandInvokeError):
+        error = error.original
+        err_msg = "An error has occurred, please try again."
     else:
         err_msg = f"A fatal error has occurred: {str(error)}"
 
@@ -83,7 +85,6 @@ async def profile_checker(interaction: discord.Interaction, user: discord.Member
     #Initialize Another Embed w/ title and color for banner
     embed_profile_banner = discord.Embed(title=f"{user.display_name}'s banner")
     #Checks if user has a custom banner and if not, does not send an image
-    #Bots don't seem to work.
     if fetch_user.banner is not None:
         embed_profile_banner.add_field(name="User Banner:", value="\u200b", inline=False)
         embed_profile_banner.set_image(url=f"{fetch_user.banner.url}")
@@ -115,6 +116,37 @@ async def purge(interaction: discord.Interaction, amount: int):
         deleted_msg = await interaction.channel.purge(limit=amount, reason=f"{interaction.user} used purge command.", check=lambda msg: not msg.pinned)
         await interaction.followup.send(f"{len(deleted_msg)} message(s) deleted.", ephemeral=True)
 
+@bot.tree.command(name="timeout", description="Timeouts selected user")
+@app_commands.checks.has_permissions(mute_members=True, moderate_members=True)
+@app_commands.describe(time="Time (in minutes) you want to timeout this person.")
+@app_commands.describe(member="Person you want to timeout.")
+@app_commands.describe(reason="Reason to timeout this user.")
+@app_commands.guild_only
+async def mute(interaction: discord.Interaction, member: discord.Member, time: int, reason: str):
+    await interaction.response.defer(ephemeral=False)
+    duration = timedelta(minutes=time)
+    if member == interaction.user:
+        await interaction.followup.send("You cannot timeout yourself!", ephemeral=True)
+    if time < 1:
+        await interaction.followup.send("Time cannot be less than 1 minute.", ephemeral=True)
+    if member == bot.user:
+        await interaction.followup.send("You cannot timeout the bot this way.", ephemeral=True)
+    await member.timeout(duration, reason=reason)
+    await interaction.followup.send(f"{member} has been timed out for {time} minutes. Reason: {reason}", ephemeral=False)
+
+@bot.tree.command(name="removetimeout", description="Removes timeout from selected user")
+@app_commands.checks.has_permissions(mute_members=True, moderate_members=True)
+@app_commands.describe(reason="Reason to remove timeout from this user.")
+@app_commands.guild_only
+async def mute(interaction: discord.Interaction, member: discord.Member, reason: str):
+    await interaction.response.defer(ephemeral=False)
+    duration = None
+    if member == interaction.user:
+        await interaction.followup.send("You cannot remove your own timeout!", ephemeral=True)
+    if not member.is_timed_out():
+        await interaction.followup.send("User is not timed out!")
+    await member.timeout(duration, reason=reason)
+    await interaction.followup.send(f"{member}'s timeout has been removed. Reason: {reason}", ephemeral=False)
 
 #Loop
 bot.run(DISCORD_TOKEN)
