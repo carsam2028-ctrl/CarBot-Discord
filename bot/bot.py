@@ -1,5 +1,4 @@
 #Imports
-import asyncio
 import os
 import datetime
 import discord
@@ -7,7 +6,7 @@ import dotenv
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
-from datetime import timedelta, datetime
+from datetime import timedelta
 load_dotenv()
 
 
@@ -18,19 +17,10 @@ intents.message_content = True
 
 #Functions
 def signature_print():
-    return datetime.now().strftime('[%Y-%m-%d %H:%M:%S]') + " [CarBot] "
+    return datetime.datetime.now().strftime('[%Y-%m-%d %H:%M:%S]') + " [CarBot] "
 
 #Bot Startup
-
-
-
 class CarBot(commands.Bot):
-    async def setup_hook(self):
-        for filename in os.listdir("./commands"):
-            if filename.endswith(".py"):
-                await self.load_extension(f"commands.{filename[:-3]}")
-                print(signature_print() + f"Loaded Command: {filename}")
-
     async def on_ready(self):
         print(signature_print() + f'Logged on as {self.user}!')
         await self.tree.sync()
