@@ -24,6 +24,7 @@ class Timeout(commands.Cog):
             await interaction.followup.send("You cannot timeout the bot this way.", ephemeral=True)
         await member.timeout(duration, reason=reason)
         await interaction.followup.send(f"{member} has been timed out for {time} minutes. Reason: {reason}", ephemeral=False)
+
 class RemoveTimeout(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
