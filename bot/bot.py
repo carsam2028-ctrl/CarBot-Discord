@@ -21,6 +21,11 @@ def signature_print():
 
 #Bot Startup
 class CarBot(commands.Bot):
+    async def setup_hook(self):
+        for filename in os.listdir('./commands'):
+            if filename.endswith('.py'):
+                await self.load_extension(f'cogs.{filename[:-3]}')
+                print(f'Loaded extension: {filename}')
     async def on_ready(self):
         print(signature_print() + f'Logged on as {self.user}!')
         await self.tree.sync()
