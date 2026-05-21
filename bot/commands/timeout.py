@@ -20,7 +20,7 @@ class Timeout(commands.Cog):
             await interaction.followup.send("You cannot timeout yourself!", ephemeral=True)
         if time < 1:
             await interaction.followup.send("Time cannot be less than 1 minute.", ephemeral=True)
-        if member == self.user:
+        if member == self.bot.user:
             await interaction.followup.send("You cannot timeout the bot this way.", ephemeral=True)
         await member.timeout(duration, reason=reason)
         await interaction.followup.send(f"{member} has been timed out for {time} minutes. Reason: {reason}", ephemeral=False)
