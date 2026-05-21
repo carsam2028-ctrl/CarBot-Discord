@@ -60,6 +60,7 @@ async def on_app_command_error(interaction: discord.Interaction, error):
         else:
             err_msg = f"A fatal error has occurred: {str(error)}"
 
+    print(signature_print() + f"Error: {str(error)} What the user saw: '{err_msg}'")
 
     if interaction.response.is_done():
         await interaction.followup.send(f"{err_msg}", ephemeral=True)
