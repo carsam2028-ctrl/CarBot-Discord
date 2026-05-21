@@ -10,6 +10,7 @@ class Purge(commands.Cog):
     @app_commands.command(name="purge", description="Purge messages")
     @app_commands.describe(amount="How many messages you want to purge (1-100)")
     @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.allowed_contexts(dms=False, private_channels=True, guilds=True)
     async def purge(self, interaction: discord.Interaction, amount: int):
         await interaction.response.defer(ephemeral=True)
 

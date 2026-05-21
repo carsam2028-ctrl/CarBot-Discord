@@ -42,7 +42,6 @@ bot = CarBot(command_prefix='CB!', intents=intents)
 @bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction, error):
     err_msg = ""
-    print(signature_print() + f"Error: {str(error)}")
     if isinstance(error, app_commands.MissingPermissions):
         err_msg = "You do not have the necessary permission(s) for this command."
     elif isinstance(error, app_commands.BotMissingPermissions):

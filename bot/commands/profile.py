@@ -8,9 +8,10 @@ class Profile(commands.Cog):
 
     @app_commands.command(name="profile", description="Check out a discord profile!")
     @app_commands.describe(user="User's profile to fetch")
+    @app_commands.allowed_contexts(dms=False, private_channels=True, guilds=True)
     async def profile_checker(self, interaction: discord.Interaction, user: discord.Member):
         await interaction.response.defer(ephemeral=False)
-        fetch_user = await bot.fetch_user(user.id)
+        fetch_user = await self.fetch_user(user.id)
         #Initialize Embed w/ title and color for main profile
         embed_profile = discord.Embed(title=f"Profile of {user.display_name}", color=discord.Color.dark_orange())
         #Add to embed_profile

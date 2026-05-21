@@ -7,6 +7,7 @@ class Help(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="help", description="Shows commands.")
+    @app_commands.allowed_contexts(dms=True, private_channels=True, guilds=True)
     async def help_cmd(self, interaction: discord.Interaction):
         embed_help_cmd = discord.Embed(title="Help", color=discord.Color.purple(), description="Commands:")
         embed_help_cmd.add_field(name="Profile", value="Check some basic info about someones profile!")

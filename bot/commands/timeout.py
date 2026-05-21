@@ -12,7 +12,7 @@ class Timeout(commands.Cog):
     @app_commands.describe(time="Time (in minutes) you want to timeout this person.",
                            member="Person you want to timeout.",
                            reason="Reason to timeout this user.")
-    @app_commands.guild_only
+    @app_commands.allowed_contexts(dms=False, private_channels=True, guilds=True)
     async def timeout(self, interaction: discord.Interaction, member: discord.Member, time: int, reason: str):
         await interaction.response.defer(ephemeral=False)
         duration = timedelta(minutes=time)

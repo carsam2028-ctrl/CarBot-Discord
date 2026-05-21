@@ -7,6 +7,7 @@ class Printer(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="printer", description="Bot repeats whatever you input!")
+    @app_commands.allowed_contexts(dms=True, private_channels=True, guilds=True)
     async def printer(self, interaction: discord.Interaction, msg: str):
         await interaction.response.send_message(f"'{msg}' \n-# -By {interaction.user.name}")
 
