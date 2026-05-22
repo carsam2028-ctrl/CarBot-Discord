@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
 from datetime import timedelta
+
 load_dotenv()
 
 
@@ -41,7 +42,6 @@ bot = CarBot(command_prefix='CB!', intents=intents)
 #Error Handler
 @bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction, error):
-    err_msg = ""
     if isinstance(error, app_commands.MissingPermissions):
         err_msg = "You do not have the necessary permission(s) for this command."
     elif isinstance(error, app_commands.BotMissingPermissions):
