@@ -2,3 +2,4 @@
 .env
 .gitkeep
 database.db
+database.db-journal
