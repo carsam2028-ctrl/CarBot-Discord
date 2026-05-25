@@ -2,7 +2,7 @@ import discord
 import time
 from discord.ext import commands
 from discord import app_commands
-
+from time import sleep
 
 class Purge(commands.Cog):
     def __init__(self, bot):
@@ -20,7 +20,7 @@ class Purge(commands.Cog):
         else:
             deleted_msg = await interaction.channel.purge(limit=amount, reason=f"{interaction.user} used purge command.", check=lambda msg: not msg.pinned)
             await interaction.followup.send(f"{len(deleted_msg)} message(s) deleted.", ephemeral=False)
-            time.sleep(3.5)
+            sleep(3.5)
             await interaction.delete_original_response()
 
 async def setup(bot):
