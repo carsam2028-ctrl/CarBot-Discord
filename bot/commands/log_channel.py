@@ -61,7 +61,7 @@ class LogChannel(commands.Cog):
                 logs += f"\nAuthor: {payload.cached_message.author}\nContent: {payload.cached_message.content}"
             else:
                 logs += f"\nThat message must have not been cached, this feature is a WIP."
-            await webhook.send(content=logs, username="Carbot Logging")
+            await webhook.send(content=logs, username="CarBot Logging")
 
 
 async def setup(bot):
